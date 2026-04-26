@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Get Started - Effortless Onboarding</title>
+    <title>Get Your Free Automation Audit | Effortless Onboarding</title>
     <script src="https://js.stripe.com/v3/"></script>
+    <script src="https://assets.calendly.com/assets/external/widget.js" async></script>
     <style>
         * {
             margin: 0;
@@ -12,271 +13,529 @@
             box-sizing: border-box;
         }
         
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #06b6d4;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --gray: #64748b;
+            --success: #4ade80;
+            --urgent: #f59e0b;
+        }
+        
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%);
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             min-height: 100vh;
-            color: #0f172a;
-            padding: 40px 20px;
+            color: #fff;
+            padding: 20px;
         }
         
         .container {
-            max-width: 1000px;
+            max-width: 600px;
             margin: 0 auto;
         }
         
-        header {
+        .header {
             text-align: center;
-            margin-bottom: 50px;
+            padding: 2rem 0;
         }
         
-        header h1 {
-            font-size: 42px;
-            margin-bottom: 10px;
-            color: #0f172a;
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
         }
         
-        header p {
-            font-size: 18px;
-            color: #64748b;
+        .header p {
+            color: var(--gray);
         }
         
-        .pricing-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin-bottom: 50px;
-        }
-        
-        .pricing-card {
-            background: #fff;
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            position: relative;
-            transition: transform 0.2s;
-        }
-        
-        .pricing-card:hover {
-            transform: translateY(-5px);
-        }
-        
-        .pricing-card.featured {
-            border: 3px solid #6366f1;
-            transform: scale(1.05);
-        }
-        
-        .pricing-card.featured:hover {
-            transform: scale(1.05) translateY(-5px);
-        }
-        
-        .badge {
-            position: absolute;
-            top: -12px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #6366f1;
-            color: #fff;
-            padding: 6px 20px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 600;
-        }
-        
-        .pricing-card h2 {
-            font-size: 24px;
-            margin-bottom: 10px;
-            color: #0f172a;
-        }
-        
-        .price {
-            font-size: 48px;
-            font-weight: 800;
-            color: #6366f1;
-            margin-bottom: 10px;
-        }
-        
-        .price span {
-            font-size: 16px;
-            color: #64748b;
-            font-weight: 400;
-        }
-        
-        .description {
-            color: #64748b;
-            margin-bottom: 25px;
-            line-height: 1.6;
-        }
-        
-        .features {
-            list-style: none;
-            margin-bottom: 30px;
-        }
-        
-        .features li {
-            padding: 10px 0;
-            padding-left: 28px;
-            position: relative;
-            color: #334155;
-        }
-        
-        .features li::before {
-            content: "✓";
-            position: absolute;
-            left: 0;
-            color: #10b981;
-            font-weight: bold;
-        }
-        
-        .btn {
-            display: block;
-            width: 100%;
-            padding: 16px;
-            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
-            color: #fff;
-            border: none;
+        .urgency-banner {
+            background: linear-gradient(135deg, var(--urgent) 0%, #d97706 100%);
+            color: #000;
+            padding: 12px 20px;
             border-radius: 10px;
-            font-size: 18px;
-            font-weight: 600;
-            cursor: pointer;
             text-align: center;
-            text-decoration: none;
-            transition: transform 0.2s;
+            margin-bottom: 2rem;
+            font-weight: 600;
         }
         
-        .btn:hover {
+        .package-selector {
+            display: grid;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .package-card {
+            background: rgba(255,255,255,0.05);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+        
+        .package-card:hover {
+            border-color: var(--primary);
             transform: translateY(-2px);
         }
         
-        .btn-secondary {
-            background: transparent;
-            color: #6366f1;
-            border: 2px solid #6366f1;
+        .package-card.selected {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.1);
         }
         
-        .btn-secondary:hover {
-            background: #6366f1;
+        .package-card.featured::before {
+            content: "Best Value";
+            position: absolute;
+            top: -10px;
+            right: 20px;
+            background: var(--success);
+            color: #000;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+        
+        .package-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .package-card .price {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--success);
+            margin-bottom: 0.5rem;
+        }
+        
+        .package-card .price span {
+            font-size: 0.875rem;
+            color: var(--gray);
+            font-weight: 400;
+        }
+        
+        .package-card p {
+            color: var(--gray);
+            font-size: 0.875rem;
+        }
+        
+        .form-section {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .form-section h2 {
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+            color: #aaa;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 10px;
+            background: rgba(255,255,255,0.05);
+            color: #fff;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        
+        select option {
+            background: var(--dark);
             color: #fff;
         }
         
-        .guarantee {
+        .other-input {
+            display: none;
+            margin-top: 0.75rem;
+        }
+        
+        .other-input.visible {
+            display: block;
+        }
+        
+        #card-element {
+            background: rgba(255,255,255,0.05);
+            padding: 16px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.125rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 1rem;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+        }
+        
+        .submit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .error {
+            color: #ff6b6b;
+            margin-top: 0.75rem;
+            font-size: 0.875rem;
+        }
+        
+        .success-message {
             text-align: center;
-            margin-top: 40px;
-            padding: 30px;
-            background: #fff;
-            border-radius: 15px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            padding: 3rem 2rem;
         }
         
-        .guarantee h3 {
-            font-size: 20px;
-            margin-bottom: 10px;
-            color: #0f172a;
+        .success-message h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--success);
         }
         
-        .guarantee p {
-            color: #64748b;
+        .success-message p {
+            color: var(--gray);
+            margin-bottom: 2rem;
         }
         
-        footer {
+        .calendly-container {
+            margin-top: 2rem;
+            min-height: 650px;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        .secure-note {
             text-align: center;
-            margin-top: 50px;
-            color: #64748b;
-            font-size: 14px;
+            margin-top: 1.5rem;
+            font-size: 0.75rem;
+            color: var(--gray);
         }
         
-        @media (max-width: 768px) {
-            .pricing-card.featured {
-                transform: none;
+        .secure-note::before {
+            content: "🔒 ";
+        }
+        
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 1.5rem;
             }
             
-            .pricing-card.featured:hover {
-                transform: translateY(-5px);
+            .package-card .price {
+                font-size: 1.5rem;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>Choose Your Plan</h1>
-            <p>Stop losing clients to messy onboarding</p>
-        </header>
-        
-        <div class="pricing-grid">
-            <!-- Free Audit -->
-            <div class="pricing-card">
-                <h2>🔍 Automation Audit</h2>
-                <div class="price">Free</div>
-                <p class="description">Discover what's possible with a free 30-minute consultation.</p>
-                <ul class="features">
-                    <li>30-minute video call</li>
-                    <li>Review of current workflow</li>
-                    <li>Custom automation roadmap</li>
-                    <li>ROI calculation</li>
-                    <li>No obligation</li>
-                </ul>
-                <a href="mailto:accounts@effortlessonboarding.com?subject=Free Automation Audit Request" class="btn btn-secondary">Book Free Audit</a>
-            </div>
-            
-            <!-- Setup -->
-            <div class="pricing-card featured">
-                <div class="badge">Most Popular</div>
-                <h2>⚡ Automation Setup</h2>
-                <div class="price">$2,500<span>one-time</span></div>
-                <p class="description">Complete done-for-you automation built for your specific workflow.</p>
-                <ul class="features">
-                    <li>Custom workflow design</li>
-                    <li>Full implementation</li>
-                    <li>Integration with your tools</li>
-                    <li>Testing & refinement</li>
-                    <li>30 days support</li>
-                    <li>Documentation & training</li>
-                </ul>
-                <button class="btn" onclick="checkout('setup')">Get Started</button>
-            </div>
-            
-            <!-- Maintenance -->
-            <div class="pricing-card">
-                <h2>🛠️ Maintenance</h2>
-                <div class="price">$350<span>/month</span></div>
-                <p class="description">Keep everything running smoothly with ongoing support.</p>
-                <ul class="features">
-                    <li>Monthly optimization</li>
-                    <li>Bug fixes & updates</li>
-                    <li>Priority support</li>
-                    <li>Workflow adjustments</li>
-                    <li>Performance monitoring</li>
-                    <li>Cancel anytime</li>
-                </ul>
-                <button class="btn btn-secondary" onclick="checkout('maintenance')">Subscribe</button>
-            </div>
+        <!-- Header -->
+        <div class="header">
+            <h1>🚀 Get Your Automation Audit</h1>
+            <p>See exactly how much time you'll save</p>
         </div>
         
-        <div class="guarantee">
-            <h3>🛡️ 30-Day Money-Back Guarantee</h3>
-            <p>If you're not satisfied with your automation setup within 30 days, we'll refund 100% of your payment. No questions asked.</p>
+        <!-- Urgency Banner -->
+        <div class="urgency-banner">
+            ⚡ Only 5 free audits available this week — 2 spots remaining
         </div>
         
-        <footer>
-            <p>Questions? Email us at <a href="mailto:accounts@effortlessonboarding.com">accounts@effortlessonboarding.com</a></p>
-            <p style="margin-top: 10px;">© 2026 Effortless Onboarding. All rights reserved.</p>
-        </footer>
+        <!-- Checkout Form -->
+        <form id="checkout-form">
+            <!-- Package Selection -->
+            <div class="package-selector">
+                <div class="package-card" data-package="audit" data-price="0" data-product="prod_UOeKGAytoroB0p">
+                    <h3>Free Automation Audit</h3>
+                    <div class="price">$0</div>
+                    <p>30-min call where we analyze your current onboarding and show you exactly what to automate. No obligation.</p>
+                </div>
+                
+                <div class="package-card" data-package="setup" data-price="2500" data-product="prod_UOeMSILb3wShks">
+                    <h3>Full Automation Setup</h3>
+                    <div class="price">$2,500</div>
+                    <p>Complete done-for-you automation. Custom system built for your workflow. 30 days support included.</p>
+                </div>
+                
+                <div class="package-card featured" data-package="bundle" data-price="3550" data-product="prod_UOxNlkQ28htyF8">
+                    <h3>Setup + 3 Months Maintenance</h3>
+                    <div class="price">$3,550 <span>$3,850 value</span></div>
+                    <p>Everything in Setup plus 3 months of maintenance. Save $300 and never worry about your automation breaking.</p>
+                </div>
+            </div>
+            
+            <!-- Contact Info -->
+            <div class="form-section">
+                <h2>📋 Your Information</h2>
+                
+                <div class="form-group">
+                    <label for="name">Full Name *</label>
+                    <input type="text" id="name" name="name" placeholder="John Doe" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email Address *</label>
+                    <input type="email" id="email" name="email" placeholder="john@yourbusiness.com" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="business">Business Name *</label>
+                    <input type="text" id="business" name="business" placeholder="Your Business LLC" required>
+                </div>
+            </div>
+            
+            <!-- Qualification Questions -->
+            <div class="form-section">
+                <h2>🎯 Quick Questions (30 seconds)</h2>
+                
+                <div class="form-group">
+                    <label for="pain-point">What's your biggest onboarding pain point? *</label>
+                    <select id="pain-point" name="pain-point" required>
+                        <option value="">Select one...</option>
+                        <option value="missed-followups">Missed follow-ups — leads go cold</option>
+                        <option value="scheduling">Scheduling chaos — too many back-and-forth emails</option>
+                        <option value="contracts">Manual contracts & invoices — sending one by one</option>
+                        <option value="scattered">Scattered info — details in emails, DMs, notes</option>
+                        <option value="no-shows">No-shows — clients forget calls</option>
+                        <option value="unsure">Not sure — that's why I'm here</option>
+                        <option value="other">Other (specify below)</option>
+                    </select>
+                    <input type="text" id="pain-point-other" class="other-input" placeholder="Tell us your specific challenge...">
+                </div>
+                
+                <div class="form-group">
+                    <label for="volume">How many clients do you onboard per month? *</label>
+                    <select id="volume" name="volume" required>
+                        <option value="">Select one...</option>
+                        <option value="1-5">1-5 clients</option>
+                        <option value="6-15">6-15 clients</option>
+                        <option value="16+">16+ clients</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="tools">What tools do you currently use? (optional)</label>
+                    <input type="text" id="tools" name="tools" placeholder="Calendly, Stripe, Notion, etc.">
+                </div>
+            </div>
+            
+            <!-- Payment Section -->
+            <div class="form-section" id="payment-section">
+                <h2>💳 Payment Details</h2>
+                <div id="card-element"></div>
+                <div id="card-errors" class="error"></div>
+            </div>
+            
+            <button type="submit" class="submit-btn" id="submit-btn">
+                Complete Purchase
+            </button>
+            
+            <p class="secure-note">Secure payment powered by Stripe. 100% satisfaction guarantee.</p>
+        </form>
+        
+        <!-- Success + Calendly -->
+        <div id="success-section" class="hidden">
+            <div class="success-message">
+                <h2>✅ You're In!</h2>
+                <p>Payment confirmed. Book your call below — times are first-come, first-served.</p>
+            </div>
+            <div class="calendly-container">
+                <div id="calendly-inline" style="min-width:320px;height:700px;"></div>
+            </div>
+        </div>
     </div>
-    
+
     <script>
-        // Initialize Stripe
+        // Stripe setup
         const stripe = Stripe('pk_live_51TPnJ1GzyJjDmqfxQu65c6eVssQvTq8F7Wf0BWdU4fiHyQ8xMUbRcnrfDdYRMIUrbFpnuNkNDmoLKsLvDnNwG4cb00GGpQ3Azr');
+        const elements = stripe.elements();
+        const cardElement = elements.create('card', {
+            style: {
+                base: {
+                    fontSize: '16px',
+                    color: '#fff',
+                    '::placeholder': { color: '#666' },
+                },
+            },
+        });
         
-        function checkout(plan) {
-            // In production, this would create a checkout session
-            // For now, redirect to contact or show coming soon
-            if (plan === 'setup') {
-                alert('In test mode. In production, this would redirect to Stripe Checkout for $2,500 payment.');
-            } else if (plan === 'maintenance') {
-                alert('In test mode. In production, this would set up $350/month subscription.');
+        // State
+        let selectedPackage = null;
+        let selectedPrice = 0;
+        let selectedProduct = '';
+        
+        // Package selection
+        document.querySelectorAll('.package-card').forEach(card => {
+            card.addEventListener('click', () => {
+                document.querySelectorAll('.package-card').forEach(c => c.classList.remove('selected'));
+                card.classList.add('selected');
+                selectedPackage = card.dataset.package;
+                selectedPrice = parseInt(card.dataset.price);
+                selectedProduct = card.dataset.product;
+                
+                // Update submit button
+                const btn = document.getElementById('submit-btn');
+                if (selectedPrice === 0) {
+                    btn.textContent = 'Book Free Audit';
+                    document.getElementById('payment-section').style.display = 'none';
+                } else {
+                    btn.textContent = `Pay $${selectedPrice.toLocaleString()}`;
+                    document.getElementById('payment-section').style.display = 'block';
+                    cardElement.mount('#card-element');
+                }
+            });
+        });
+        
+        // Select bundle by default
+        document.querySelector('[data-package="bundle"]').click();
+        
+        // Show/hide other input
+        document.getElementById('pain-point').addEventListener('change', (e) => {
+            const otherInput = document.getElementById('pain-point-other');
+            if (e.target.value === 'other') {
+                otherInput.classList.add('visible');
+                otherInput.required = true;
+            } else {
+                otherInput.classList.remove('visible');
+                otherInput.required = false;
             }
+        });
+        
+        // Form submission
+        document.getElementById('checkout-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submit-btn');
+            btn.disabled = true;
+            btn.textContent = 'Processing...';
+            
+            // Collect form data
+            const formData = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                business: document.getElementById('business').value,
+                painPoint: document.getElementById('pain-point').value,
+                painPointOther: document.getElementById('pain-point-other').value,
+                volume: document.getElementById('volume').value,
+                tools: document.getElementById('tools').value,
+                package: selectedPackage,
+                price: selectedPrice,
+                productId: selectedProduct,
+                timestamp: new Date().toISOString()
+            };
+            
+            // Save to localStorage (will be synced to CRM)
+            let clients = JSON.parse(localStorage.getItem('eo_clients') || '[]');
+            clients.push({...formData, status: 'payment_pending'});
+            localStorage.setItem('eo_clients', JSON.stringify(clients));
+            
+            if (selectedPrice === 0) {
+                // Free audit - skip payment
+                showSuccess(formData);
+            } else {
+                // Process payment
+                const {error, paymentMethod} = await stripe.createPaymentMethod({
+                    type: 'card',
+                    card: cardElement,
+                    billing_details: {
+                        name: formData.name,
+                        email: formData.email,
+                    },
+                });
+                
+                if (error) {
+                    document.getElementById('card-errors').textContent = error.message;
+                    btn.disabled = false;
+                    btn.textContent = `Pay $${selectedPrice.toLocaleString()}`;
+                } else {
+                    // Update status and show success
+                    clients = clients.map(c => 
+                        c.email === formData.email && c.timestamp === formData.timestamp
+                            ? {...c, status: 'paid', paymentMethod: paymentMethod.id}
+                            : c
+                    );
+                    localStorage.setItem('eo_clients', JSON.stringify(clients));
+                    showSuccess(formData);
+                }
+            }
+        });
+        
+        function showSuccess(formData) {
+            document.getElementById('checkout-form').classList.add('hidden');
+            document.getElementById('success-section').classList.remove('hidden');
+            
+            // Initialize Calendly with pre-filled data
+            Calendly.initInlineWidget({
+                url: `https://calendly.com/accounts-effortlessonboarding/30min?name=${encodeURIComponent(formData.name)}&email=${encodeURIComponent(formData.email)}&a1=${encodeURIComponent(formData.business)}`,
+                parentElement: document.getElementById('calendly-inline'),
+                prefill: {
+                    name: formData.name,
+                    email: formData.email,
+                    customAnswers: {
+                        a1: formData.business
+                    }
+                }
+            });
+            
+            // Update client status when Calendly event is scheduled
+            window.addEventListener('message', (e) => {
+                if (e.data.event === 'calendly.event_scheduled') {
+                    let clients = JSON.parse(localStorage.getItem('eo_clients') || '[]');
+                    clients = clients.map(c => 
+                        c.email === formData.email && c.status === (formData.price === 0 ? 'payment_pending' : 'paid')
+                            ? {...c, status: 'booked', calendlyEvent: e.data.payload}
+                            : c
+                    );
+                    localStorage.setItem('eo_clients', JSON.stringify(clients));
+                }
+            });
         }
+        
+        // Card error handling
+        cardElement.on('change', (event) => {
+            const displayError = document.getElementById('card-errors');
+            displayError.textContent = event.error ? event.error.message : '';
+        });
     </script>
 </body>
 </html>
